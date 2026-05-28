@@ -1,0 +1,1 @@
+adegenet ape dartR.base dartR.popgenomics dartRverse fields furrr ggplot2 LEA parallel patchwork ranger rlang rnaturalearth rnaturalearthdata sf sp stringr tess3r tidyverse vcfR viridis

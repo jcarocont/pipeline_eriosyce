@@ -7,14 +7,14 @@ lfmm_selective <- NULL
 #| description: Path al CSV de sitios selectivos (GF)
 gf_selective <- NULL
 
-#| description: Path al RDS con todos los loci (vector all_loci)
-all_loci_rds <- NULL
+#| description: Path al CSV de sitios putativos (GF subset)
+gf_subset <- NULL
 
 #| description: Path al RDS del objeto genlight (dartRverse)
 gl_rds <- NULL
 
 #| description: Path de salida para el RDS de resultados
-outfile <- "loci_clasificados.rds"
+outfile_rds <- "loci_clasificados.rds"
 
 #| description: Directorio de salida para los FASTA
 outdir <- "."
@@ -46,11 +46,12 @@ cat("   Loci LFMM crudos:", length(selec_lmmf), "\n")
 cat("── Cargando loci GF:", gf_selective, "\n")
 selec_rf <- as.vector(read.csv(gf_selective))[[1]]
 cat("   Loci GF crudos:", length(selec_rf), "\n")
-
-cat("── Cargando all_loci:", all_loci_rds, "\n")
-all_loci <- readRDS(all_loci_rds)
+gl <- readRDS(gl_rds)
+cat("── Cargando all_loci:", gl_rds, "\n")
+all_loci <- locNames(gl)
 cat("   Total loci de referencia:", length(all_loci), "\n")
-
+gf_subset_names<-read.csv(gf_subset)
+gf_subset_names<-unique(gf_subset_names$SNP_ID)
 # ══════════════════════════════════════════════════════════════════════════════
 # 2. INTERSECTAR CON all_loci Y CLASIFICAR
 # ══════════════════════════════════════════════════════════════════════════════
@@ -83,7 +84,8 @@ res <- list(
   selected_xor = selected_xor,
   true_neutral = true_neutral,
   neutral_rf   = neutral_rf,
-  neutral_lmmf = neutral_lmmf
+  neutral_lmmf = neutral_lmmf,
+  putative_local=gf_subset_names
 )
 
 saveRDS(res, outfile)
@@ -93,7 +95,6 @@ cat("✓ RDS de clasificación guardado en:", outfile, "\n\n")
 # 3. EXPORTAR FASTA VIA DARTRVERSE
 # ══════════════════════════════════════════════════════════════════════════════
 cat("── Cargando genlight:", gl_rds, "\n")
-gl <- readRDS(gl_rds)
 cat("   Individuos:", nInd(gl), "| Loci:", nLoc(gl), "| Pops:", nPop(gl), "\n")
 cat("   Poblaciones:", paste(popNames(gl), collapse = ", "), "\n")
 
@@ -126,7 +127,19 @@ export_fasta <- function(gl, loci_vec, label) {
 }
 
 export_fasta(gl, true_neutral, "true_neutral")
+export_fasta(gl, gf_subset,"putative_local")
 export_fasta(gl, selec_rf,    "selec_gf")
 export_fasta(gl, selec_lmmf,  "selec_lfmm")
+
+for (cat in names(res)) {
+  gl_sub <- gl.keep.loc(gl, loc.list = intersect(res[[cat]], locNames(gl)), verbose = 0)
+  gl2structure(
+    gl_sub,
+    outfile = paste0("strfile_", cat, ".str"),
+    outpath = outdir,
+    ploidy  = 2
+  )
+  cat(sprintf("✓ STR exportado: strfile_%s.str (%d loci)\n", cat, nLoc(gl_sub)))
+}
 
 cat("\n✓ Todo listo.\n")

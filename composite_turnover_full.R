@@ -676,7 +676,15 @@ p12f <- snp_summary |>
 ggsave("r2_vs_turnover.png", plot = p12f, width = 8, height = 6, dpi = 300)
 message("[12f] r2_vs_turnover.png guardado")
 print(p12f)
+snps_putativos <- snp_summary |>
+  filter(
+    mean_r2        > quantile(mean_r2,        0.50, na.rm = TRUE),
+    total_turnover > quantile(total_turnover, 0.30, na.rm = TRUE),
+    total_turnover < quantile(total_turnover, 0.70, na.rm = TRUE)
+  )
 
+message(sprintf("[putative] SNPs filtrados: %d", nrow(snps_putativos)))
+write.csv(snps_putativos, "snps_putativos.csv", row.names = FALSE)
 # ─────────────────────────────────────────────
 # FIN
 # ─────────────────────────────────────────────

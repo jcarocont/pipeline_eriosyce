@@ -27,7 +27,7 @@ str_df  <- str_df[seq(2, nrow(str_df), 2), ]
 
 coord <- read.csv(coord_file, row.names = 1)
 coord$pop <- NULL
-coord <- unique(coord[coord$id %in% str_df$X, ])
+coord <- unique(coord[coord$id %in% str_df$id, ])
 
 namev            <- str_df$X
 rownames(str_df) <- namev

@@ -1,4 +1,12 @@
-#!/usr/bin/env Rscript
+#!/usr/bin/env Rapp
+#| description: Path al VCF de entrada
+vcf_file <- NULL
+
+#| description: Path al CSV de variables ambientales
+env_file <- NULL
+
+#| description: Path de salida para el RDS de modelos
+output <- "forest_model.rds"
 
 library(ranger)
 library(vcfR)
@@ -40,7 +48,7 @@ train_snp_model <- function(snp_vector, env, ntree=500, na_act="na.learn") {
 plan(multicore, workers = 8)
 options(future.globals.maxSize = 5e9,future.rng.onMisuse = "ignore",future.stdout = TRUE)
 
-vcf <- read.vcfR("genotype_gl10f.vcf")
+vcf <- read.vcfR(vcf_file)
 
 genlight_obj <- vcfR2genlight(vcf)
 
@@ -57,7 +65,7 @@ rm(vcf); gc()
 rm(genlight_obj); gc()
 message("loading env matix")
 
-env <- read.csv("envar_final-corto.csv") |>
+env <- read.csv(env_file) |>
   column_to_rownames("id") |>
   select(-2,-X) |>
   as.matrix()

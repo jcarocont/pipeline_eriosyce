@@ -1,0 +1,20 @@
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)
+Options in effect:
+  --allow-extra-chr
+  --allow-no-sex
+  --file /home/agente/pipeline_eriosyce/test-data/test-data
+  --out /home/agente/pipeline_eriosyce/test-data/test-data
+
+Hostname: atropa
+Working directory: /home/agente/pipeline_eriosyce
+Start time: Wed May 27 16:09:01 2026
+
+Random number seed: 1779912541
+3756 MB RAM detected; reserving 1878 MB for main workspace.
+Scanning .ped file... done.
+Performing single-pass .bed write (200 variants, 15 people).
+--file: /home/agente/pipeline_eriosyce/test-data/test-data.bed +
+/home/agente/pipeline_eriosyce/test-data/test-data.bim +
+/home/agente/pipeline_eriosyce/test-data/test-data.fam written.
+
+End time: Wed May 27 16:09:01 2026
